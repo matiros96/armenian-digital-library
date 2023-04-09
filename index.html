@@ -75,6 +75,22 @@
       .banner p {
         font-size: 0.8rem !important;
       }
+      #side-panel {
+        flex-direction: column !important;
+      }
+      #side-panel span {
+        font-size: 0.875rem !important;
+      }
+      .side-panel-filter {
+        gap: 0.5rem !important;
+      }
+      #side-panel button {
+        font-size: 0.875rem !important;
+        padding: 0.25rem 0.5rem 0.25rem 0.5rem !important;
+      }
+      .side-panel-buttons-container {
+        gap: 0.5rem !important;
+      }
     }
     body {
       color-scheme: light;
@@ -185,12 +201,12 @@
       flex-direction: row;
       width: 100%;
       background-color: var(--accent);
+      padding: 1rem;
     }
     #side-panel span {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--fg);
-
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--fg);
     }
     .side-panel-filter {
       display: flex;
@@ -375,14 +391,13 @@
     // data = filterBooks({ publication_date: "1951-07-16" }, data);
 
     function handleFilter(el) {
-        const filter = el.parentElement.previousElementSibling.textContent;
-        const order = el.textContent;
-        sortBooks(filter.toLowerCase(), order, data);
-        loadBooks();
+      const filter = el.parentElement.previousElementSibling.textContent;
+      const order = el.textContent;
+      sortBooks(filter.toLowerCase(), order, data);
+      loadBooks();
     }
 
     function loadBooks() {
-
       // Get a reference to the book list container element
       const bookListContainer = document.querySelector("#book-list-container");
       bookListContainer.textContent = "";
