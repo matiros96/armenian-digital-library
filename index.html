@@ -176,17 +176,52 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
     }
     #side-panel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
       width: 100%;
-      height: 100%;
       background-color: var(--accent);
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease-in-out;
+    }
+    #side-panel span {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--fg);
+
+    }
+    .side-panel-filter {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      width: 100%;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    #side-panel button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      padding: 0.75rem 1rem 0.75rem 1rem;
+      text-align: center;
+      background-color: var(--accent-strong);
+      font-weight: 500;
+      color: var(--bg);
+      outline: none;
+      border: none;
+      user-select: none;
+      cursor: pointer;
+    }
+    .side-panel-buttons-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      gap: 1rem;
     }
     #book-list-container {
       display: flex;
@@ -279,15 +314,37 @@
         <p>Utforska Armeniens historia och kultur i skriftlig form</p>
       </section>
       <section class="content">
-        <div id="side-panel"></div>
+        <div id="side-panel">
+          <div class="side-panel-filter">
+            <span>Title</span>
+            <div class="side-panel-buttons-container">
+              <button onclick="handleFilter(this)">ASC</button>
+              <button onclick="handleFilter(this)">DESC</button>
+            </div>
+          </div>
+          <div class="side-panel-filter">
+            <span>Author</span>
+            <div class="side-panel-buttons-container">
+              <button onclick="handleFilter(this)">ASC</button>
+              <button onclick="handleFilter(this)">DESC</button>
+            </div>
+          </div>
+          <div class="side-panel-filter">
+            <span>Year</span>
+            <div class="side-panel-buttons-container">
+              <button onclick="handleFilter(this)">ASC</button>
+              <button onclick="handleFilter(this)">DESC</button>
+            </div>
+          </div>
+        </div>
         <div id="book-list-container"></div>
       </section>
       <footer>
         <a class="nav-link" href="#">Hem</a>
-      <a class="nav-link" href="/om-oss">Om oss</a>
-      <a class="nav-link" id="email-button" href="#"
-        >Skicka intresseförfrågan</a
-      >
+        <a class="nav-link" href="/om-oss">Om oss</a>
+        <a class="nav-link" id="email-button" href="#"
+          >Skicka intresseförfrågan</a
+        >
       </footer>
     </main>
   </body>
@@ -303,6 +360,7 @@
           return a[field] < b[field] ? 1 : -1;
         }
       });
+      return sortedBooks;
     }
     function filterBooks(filters, array) {
       const filteredBooks = array.filter((book) => {
@@ -312,15 +370,22 @@
       });
       return filteredBooks;
     }
-    
 
-    sortBooks("title", "ASC", data);
+    // sortBooks("title", "ASC", data);
     // data = filterBooks({ publication_date: "1951-07-16" }, data);
 
+    function handleFilter(el) {
+        const filter = el.parentElement.previousElementSibling.textContent;
+        const order = el.textContent;
+        sortBooks(filter.toLowerCase(), order, data);
+        loadBooks();
+    }
+
     function loadBooks() {
+
       // Get a reference to the book list container element
       const bookListContainer = document.querySelector("#book-list-container");
-
+      bookListContainer.textContent = "";
       // Fetch the book data from the JSON file
 
       // Loop through each book and create a book card for it
@@ -408,28 +473,27 @@
       });
 
       function insertCredentials() {
-          // Get a reference to the email button
-          const emailButton = document.querySelector("#email-button");
-          emailButton.addEventListener("click", () => {
-            // Get the current selection of ISBNs from localStorage
-            const selectedBooks =
-              JSON.parse(localStorage.getItem("selectedBooks")) || [];
-    
-            // Generate the email body text by joining the selected ISBNs with commas
-            const emailBody = selectedBooks.join(",");
-            const reciever = "example@example.com";
-            var blindCopy = "example@example.com";
-            const subject = "site-name: interest of selected books";
-            // Set the href of the email button to a mailto link with the appropriate email address, subject, and body
-            emailButton.href = `mailto:${reciever}?bcc=${blindCopy}&subject=${subject}&body=${emailBody}`;
-    
-            // Clear the selection from localStorage
-            localStorage.removeItem("selectedBooks");
-          });
+        // Get a reference to the email button
+        const emailButton = document.querySelector("#email-button");
+        emailButton.addEventListener("click", () => {
+          // Get the current selection of ISBNs from localStorage
+          const selectedBooks =
+            JSON.parse(localStorage.getItem("selectedBooks")) || [];
+
+          // Generate the email body text by joining the selected ISBNs with commas
+          const emailBody = selectedBooks.join(",");
+          const reciever = "example@example.com";
+          var blindCopy = "example@example.com";
+          const subject = "site-name: interest of selected books";
+          // Set the href of the email button to a mailto link with the appropriate email address, subject, and body
+          emailButton.href = `mailto:${reciever}?bcc=${blindCopy}&subject=${subject}&body=${emailBody}`;
+
+          // Clear the selection from localStorage
+          localStorage.removeItem("selectedBooks");
+        });
       }
 
       insertCredentials();
-
     }
     function update() {
       updateProgress();
