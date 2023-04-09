@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Armenian Digital Library</title>
+    <meta
+      name="description"
+      content="Utforska Armeniens historia och kultur i skriftlig form"
+    />
+    <meta
+      name="keywords"
+      content="digital, library, books, armenian, history, culture"
+    />
+    <meta name="author" content="ARS" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href="https://www.example.com/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="text/javascript" src="./jsondata.js"></script>
+  </head>
+  <style>
+    :root {
+      --bg: #fefcf1;
+      --fg-black: #000000;
+      --fg-accent: #913108;
+      --fg-white: #ffffff;
+      --accent: #f7bf68;
+      --accent-light: #faeca7;
+      --accent-medium: #f4bf21;
+      --accent-strong: #f4753e;
+      --button: #89e992;
+      --button-active: #1fad2e;
+      --button-disabled: #cccccc;
+    }
+    body {
+      color-scheme: light;
+      text-rendering: optimizeLegibility;
+      text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      font-family: "Inter", sans-serif;
+      /* Remove blue highlight on mobile devices */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      min-height: 100vh !important;
+      height: 100vh !important;
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--fg);
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem 2rem 1rem;
+      gap: 1rem;
+    }
+    .nav-link {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--fg-black);
+      text-decoration: none;
+      transition: color 0.3s ease-in-out;
+    }
+    .nav-link:hover {
+      color: var(--fg-accent);
+    }
+    #email-button {
+      margin-left: auto;
+      cursor: pointer;
+      user-select: none;
+      border: none;
+      outline: none;
+      padding: 1rem 2rem 1rem 2rem;
+      background-color: var(--accent-strong);
+      color: var(--fg-white);
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.3s ease-in-out;
+    }
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: var(--accent);
+      padding: 4rem 2rem 4rem 2rem;
+      gap: 1rem;
+    }
+    footer a {
+      margin: 0 !important;
+    }
+    .banner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .banner img {
+      width: 100%;
+      max-height: 20rem;
+      object-fit: cover;
+      filter: brightness(0.5);
+    }
+    .banner h1 {
+      margin-top: -4rem;
+      position: absolute;
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      color: var(--bg);
+    }
+    .banner h2 {
+      position: absolute;
+      margin-top: 3rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--bg);
+    }
+    .banner p {
+      position: absolute;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 10rem;
+      background-color: var(--bg);
+      color: var(--accent-strong);
+      padding: 0.5rem;
+    }
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #side-panel {
+      width: 100%;
+      height: 100%;
+      background-color: var(--accent);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    #book-list-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .book-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: column;
+      width: 18.75rem;
+      height: fit-content;
+      background-color: var(--accent-light);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+    .book-card div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .book-card img {
+      width: 20rem;
+      object-fit: contain;
+      aspect-ratio: 1/1;
+    }
+    .book-card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .book-card p {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+    .selected {
+      background-color: var(--button-active) !important;
+    }
+    .book-card button {
+      width: 100%;
+      height: 2rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: var(--button);
+      color: var(--fg-white);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    .disabled {
+      background-color: var(--button-disabled);
+      cursor: not-allowed;
+    }
+    .book-card button:active {
+      background-color: var(--button-active);
+    }
+    .book-card button:disabled {
+      background-color: var(--button-disabled);
+      cursor: not-allowed;
+    }
+  </style>
+  <body>
+    <nav>
+      <a class="nav-link" href="#">Hem</a>
+      <a class="nav-link" href="#">Om oss</a>
+      <a class="nav-link" href="#">Böcker</a>
+      <a class="nav-link" id="email-button" href="#"
+        >Skicka intresseförfrågan</a
+      >
+    </nav>
+    <main>
+      <section class="banner">
+        <img
+          alt="banner of armenian culture"
+          src="https://images.unsplash.com/photo-1603872864499-bd75c625bf0b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80"
+        />
+        <h1>Armenian Digital Library</h1>
+        <h2>Armeniska Riksförbundet</h2>
+        <p>Utforska Armeniens historia och kultur i skriftlig form</p>
+      </section>
+      <section class="content">
+        <div id="side-panel"></div>
+        <div id="book-list-container"></div>
+      </section>
+      <footer>
+        <a class="nav-link" href="#">Hem</a>
+        <a class="nav-link" href="#">Om oss</a>
+        <a class="nav-link" href="#">Böcker</a>
+        <a class="nav-link" id="email-button" href="#"
+          >Skicka intresseförfrågan</a
+        >
+      </footer>
+    </main>
+  </body>
+  <script async defer>
+    var data = getBooks();
+    // Copy of data
+    const dataBackup = data;
+    function sortBooks(field, order, array) {
+      const sortedBooks = array.sort((a, b) => {
+        if (order === "ASC") {
+          return a[field] > b[field] ? 1 : -1;
+        } else {
+          return a[field] < b[field] ? 1 : -1;
+        }
+      });
+    }
+    function filterBooks(filters, array) {
+      const filteredBooks = array.filter((book) => {
+        return Object.keys(filters).every((key) => {
+          return book[key] === filters[key];
+        });
+      });
+      return filteredBooks;
+    }
+
+    sortBooks("title", "ASC", data);
+    data = filterBooks({ publication_date: "1951-07-16" }, data);
+
+    function loadBooks() {
+      // Get a reference to the book list container element
+      const bookListContainer = document.querySelector("#book-list-container");
+      
+      // Fetch the book data from the JSON file
+
+      // Loop through each book and create a book card for it
+      data.forEach((book) => {
+        const bookCard = document.createElement("div");
+        bookCard.classList.add("book-card");
+
+        // Set the book card's ID to the book's ISBN
+        bookCard.id = book.isbn;
+
+        const bookContent = document.createElement("div");
+        const bookInfo = document.createElement("div");
+
+        const bookTitle = document.createElement("h2");
+        bookTitle.textContent = book.title;
+        bookContent.appendChild(bookTitle);
+
+        const bookImage = document.createElement("img");
+        bookImage.src = book.img;
+        bookImage.alt = `Cover of ${book.title}`;
+        bookContent.appendChild(bookImage);
+
+        const bookAuthor = document.createElement("p");
+        bookAuthor.textContent = `Author: ${book.author}`;
+        bookInfo.appendChild(bookAuthor);
+
+        const bookPublicationYear = document.createElement("p");
+        bookPublicationYear.textContent = `Publication Year: ${book.publication_date}`;
+        bookInfo.appendChild(bookPublicationYear);
+
+        const bookLanguage = document.createElement("p");
+        bookLanguage.textContent = `Language: ${book.language}`;
+        bookInfo.appendChild(bookLanguage);
+
+        const bookPublisher = document.createElement("p");
+        bookPublisher.textContent = `Publisher: ${book.publisher}`;
+        bookInfo.appendChild(bookPublisher);
+
+        bookContent.append(bookInfo);
+        bookCard.append(bookContent);
+
+        // Add a "Select" button to the book card
+        const selectButton = document.createElement("button");
+        const emailButton = document.getElementById("email-button");
+        if (book.available === false) {
+          selectButton.classList.add("disabled");
+          selectButton.disabled = true;
+          selectButton.textContent = "Unavailable";
+        } else {
+          selectButton.textContent = "Lägg till";
+          selectButton.addEventListener("click", () => {
+            // Get the current selection from localStorage or create an empty array if it doesn't exist
+            let currentSelection =
+              JSON.parse(localStorage.getItem("selectedBooks")) || [];
+
+            // Check if the book's ISBN is already in the selection
+            const bookIndex = currentSelection.indexOf(book.isbn);
+            if (bookIndex > -1) {
+              // The book is already in the selection, so remove it and update the button style
+              currentSelection.splice(bookIndex, 1);
+              selectButton.classList.remove("selected");
+              selectButton.textContent = "Lägg till";
+            } else {
+              // The book is not in the selection, so add it and update the button style
+              currentSelection.push(book.isbn);
+              selectButton.classList.add("selected");
+              selectButton.textContent = "Ta bort";
+            }
+            if (currentSelection.length === 0) {
+              emailButton.textContent = `Skicka intresseförfrågan`;
+            } else {
+              emailButton.textContent = `Skicka intresseförfrågan (${currentSelection.length})`;
+            }
+
+            // Store the updated selection in localStorage
+            localStorage.setItem(
+              "selectedBooks",
+              JSON.stringify(currentSelection)
+            );
+          });
+        }
+        bookCard.appendChild(selectButton);
+
+        bookListContainer.appendChild(bookCard);
+      });
+
+      // Get a reference to the email button
+      const emailButton = document.querySelector("#email-button");
+      emailButton.addEventListener("click", () => {
+        // Get the current selection of ISBNs from localStorage
+        const selectedBooks =
+          JSON.parse(localStorage.getItem("selectedBooks")) || [];
+
+        // Generate the email body text by joining the selected ISBNs with commas
+        const emailBody = selectedBooks.join(",");
+        const reciever = "example@example.com";
+        var blindCopy = "example@example.com";
+        const subject = "site-name: interest of selected books";
+        // Set the href of the email button to a mailto link with the appropriate email address, subject, and body
+        emailButton.href = `mailto:${reciever}?bcc=${blindCopy}&subject=${subject}&body=${emailBody}`;
+
+        // Clear the selection from localStorage
+        localStorage.removeItem("selectedBooks");
+      });
+    }
+    function update() {
+      updateProgress();
+      updateButtons();
+      function updateProgress() {
+        let currentSelection =
+          JSON.parse(localStorage.getItem("selectedBooks")) || [];
+        const emailButton = document.getElementById("email-button");
+        if (currentSelection.length === 0) {
+          emailButton.textContent = `Skicka intresseförfrågan`;
+        } else {
+          emailButton.textContent = `Skicka intresseförfrågan (${currentSelection.length})`;
+        }
+      }
+      function updateButtons() {
+        let currentSelection =
+          JSON.parse(localStorage.getItem("selectedBooks")) || [];
+
+        for (let i = 0; i < currentSelection.length; i++) {
+          let bookElement = document.getElementById(currentSelection[i]);
+          let bookCard = document.getElementById(bookElement.id);
+          let bookCardChildren = bookCard.children;
+          let bookCardButton = bookCardChildren[1];
+          if (bookCard.id === bookElement.id) {
+            bookCardButton.classList.add("selected");
+            bookCardButton.textContent = "Ta bort";
+          } else {
+            bookCardButton.classList.remove("selected");
+            bookCardButton.textContent = "Lägg till";
+          }
+        }
+      }
+    }
+    loadBooks();
+    update();
+  </script>
+</html>
