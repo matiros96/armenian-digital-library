@@ -312,6 +312,7 @@
       });
       return filteredBooks;
     }
+    
 
     sortBooks("title", "ASC", data);
     // data = filterBooks({ publication_date: "1951-07-16" }, data);
@@ -406,24 +407,29 @@
         bookListContainer.appendChild(bookCard);
       });
 
-      // Get a reference to the email button
-      const emailButton = document.querySelector("#email-button");
-      emailButton.addEventListener("click", () => {
-        // Get the current selection of ISBNs from localStorage
-        const selectedBooks =
-          JSON.parse(localStorage.getItem("selectedBooks")) || [];
+      function insertCredentials() {
+          // Get a reference to the email button
+          const emailButton = document.querySelector("#email-button");
+          emailButton.addEventListener("click", () => {
+            // Get the current selection of ISBNs from localStorage
+            const selectedBooks =
+              JSON.parse(localStorage.getItem("selectedBooks")) || [];
+    
+            // Generate the email body text by joining the selected ISBNs with commas
+            const emailBody = selectedBooks.join(",");
+            const reciever = "example@example.com";
+            var blindCopy = "example@example.com";
+            const subject = "site-name: interest of selected books";
+            // Set the href of the email button to a mailto link with the appropriate email address, subject, and body
+            emailButton.href = `mailto:${reciever}?bcc=${blindCopy}&subject=${subject}&body=${emailBody}`;
+    
+            // Clear the selection from localStorage
+            localStorage.removeItem("selectedBooks");
+          });
+      }
 
-        // Generate the email body text by joining the selected ISBNs with commas
-        const emailBody = selectedBooks.join(",");
-        const reciever = "example@example.com";
-        var blindCopy = "example@example.com";
-        const subject = "site-name: interest of selected books";
-        // Set the href of the email button to a mailto link with the appropriate email address, subject, and body
-        emailButton.href = `mailto:${reciever}?bcc=${blindCopy}&subject=${subject}&body=${emailBody}`;
+      insertCredentials();
 
-        // Clear the selection from localStorage
-        localStorage.removeItem("selectedBooks");
-      });
     }
     function update() {
       updateProgress();
